@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokédex</title>
+  <link rel="icon" type="image/png" href="https://icon-library.com/images/pokedex-icon/pokedex-icon-8.jpg">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #2c3e50;
+      color: #ecf0f1;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      background-color: #3498db;
+      color: #fff;
+      padding: 1em;
+      text-align: center;
+      font-size: 1.5em;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #34495e;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #pokemonList {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .pokemonCard {
+      cursor: pointer;
+      padding: 15px;
+      background-color: #2c3e50;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s;
+      position: relative;
+    }
+
+    .pokemonCard:hover {
+      transform: scale(1.05);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .pokemonCard:hover img {
+      transform: rotate(20deg) scale(1.2);
+    }
+
+    p {
+      margin: 0;
+      font-weight: bold;
+    }
+
+    .pokemonName {
+      font-size: 1.8em;
+      margin-bottom: 5px;
+    }
+
+    .pokemonNumber {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8em;
+      color: #bdc3c7;
+    }
+
+    #pokemonModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    #modalContent {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      position: relative;
+    }
+
+    #closeModal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      color: #3498db;
+      font-weight: bold;
+      font-size: 1.5em;
+      transition: transform 0.3s;
+    }
+
+    #closeModal:hover {
+      transform: scale(1.2);
+    }
+
+    #modalPokemonName {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: #000;
+      font-weight: bold;
+    }
+
+    #modalPokemonImage {
+      max-width: 200px;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    #modalPokemonImage:hover {
+      transform: rotate(20deg) scale(1.2);
+    }
+
+    #modalPokemonDescription {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    #modalPokemonDetails {
+      font-size: 1.2em;
+      color: #000;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    #searchBarContainer {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    #searchBar {
+      flex: 1;
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+
+    #clearSearchButton {
+      cursor: pointer;
+      padding: 10px;
+      background-color: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      margin-left: 10px;
+    }
+
+    #searchButton {
+      cursor: pointer;
+      padding: 10px;
+      margin-left: 10px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Pokédex by 𝓛</h1>
+  </header>
+
+  <main>
+    <div id="searchBarContainer">
+      <input type="text" id="searchBar" placeholder="Search Pokemon by Name">
+      <button id="clearSearchButton">x</button>
+      <button id="searchButton">Search</button>
+    </div>
+    <div id="pokemonList"></div>
+  </main>
+
+  <div id="pokemonModal">
+    <div id="modalContent">
+      <span id="closeModal">&times;</span>
+      <h2 id="modalPokemonName"></h2>
+      <img id="modalPokemonImage" alt="Pokemon Image">
+      <p id="modalPokemonDescription"></p>
+      <p id="modalPokemonDetails"></p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const pokemonListElement = document.getElementById("pokemonList");
+      const pokemonModal = document.getElementById("pokemonModal");
+      const closeModalButton = document.getElementById("closeModal");
+      const modalPokemonName = document.getElementById("modalPokemonName");
+      const modalPokemonImage = document.getElementById("modalPokemonImage");
+      const modalPokemonDescription = document.getElementById("modalPokemonDescription");
+      const modalPokemonDetails = document.getElementById("modalPokemonDetails");
+      const searchBar = document.getElementById("searchBar");
+      const clearSearchButton = document.getElementById("clearSearchButton");
+      const searchButton = document.getElementById("searchButton");
+
+      const createdPokemonIds = new Set();
+
+      function createPokemonCard(pokemonDetails) {
+        const pokemonCard = document.createElement("div");
+        pokemonCard.classList.add("pokemonCard");
+
+        const image = document.createElement("img");
+        image.src = pokemonDetails.sprites.other["official-artwork"].front_default;
+        image.alt = pokemonDetails.name;
+
+        const name = document.createElement("p");
+        name.classList.add("pokemonName");
+        name.textContent = capitalizeFirstLetter(pokemonDetails.name);
+
+        const number = document.createElement("p");
+        number.classList.add("pokemonNumber");
+        number.textContent = `#${pokemonDetails.id}`;
+
+        pokemonCard.appendChild(image);
+        pokemonCard.appendChild(name);
+        pokemonCard.appendChild(number);
+        pokemonListElement.appendChild(pokemonCard);
+
+        createdPokemonIds.add(pokemonDetails.id);
+
+        pokemonCard.addEventListener("click", () => {
+          showModal(pokemonDetails);
+        });
+      }
+
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
+
+      function showModal(pokemonDetails) {
+        modalPokemonName.textContent = capitalizeFirstLetter(pokemonDetails.name);
+        modalPokemonImage.src = pokemonDetails.sprites.other["official-artwork"].front_default;
+
+        fetch(pokemonDetails.species.url)
+          .then(response => response.json())
+          .then(speciesDetails => {
+            const abilities = pokemonDetails.abilities.map(ability => capitalizeFirstLetter(ability.ability.name)).join(", ");
+            const types = pokemonDetails.types.map(type => capitalizeFirstLetter(type.type.name)).join(", ");
+            const description = speciesDetails.flavor_text_entries.find(entry => entry.language.name === 'en').flavor_text;
+            const genders = speciesDetails.gender_rate === -1 ? "Genderless" : `Male: ${speciesDetails.gender_rate * 12.5}%, Female: ${(8 - speciesDetails.gender_rate) * 12.5}%`;
+
+            modalPokemonDescription.textContent = description;
+
+            const detailsText = `
+              Abilities: ${abilities}
+              <br>Types: ${types}
+              <br>Height: ${pokemonDetails.height / 10} m
+              <br>Weight: ${pokemonDetails.weight / 10} kg
+              <br>Gender: ${genders}
+            `;
+
+            modalPokemonDetails.innerHTML = detailsText;
+            pokemonModal.style.display = "flex";
+          })
+          .catch(error => console.error("Error fetching Pokemon species details:", error));
+      }
+
+      function closeModal() {
+        modalPokemonName.textContent = "";
+        modalPokemonImage.src = "";
+        modalPokemonDescription.textContent = "";
+        modalPokemonDetails.textContent = "";
+        pokemonModal.style.display = "none";
+      }
+
+      function searchPokemon() {
+        const searchName = searchBar.value.toLowerCase();
+        const apiUrl = `https://pokeapi.co/api/v2/pokemon/${searchName}`;
+
+        fetch(apiUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Pokemon not found");
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (!createdPokemonIds.has(data.id)) {
+              createPokemonCard(data);
+            }
+            showModal(data);
+          })
+          .catch(error => console.error("Error fetching Pokemon details:", error));
+      }
+
+      const apiUrl = "https://pokeapi.co/api/v2/pokemon?limit=905";
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const pokemonData = data.results;
+
+          Promise.all(
+            pokemonData.map(pokemon => fetch(pokemon.url).then(response => response.json()))
+          )
+          .then(pokemonDetailsList => {
+            pokemonDetailsList.sort((a, b) => a.id - b.id);
+
+            pokemonDetailsList.forEach(pokemonDetails => {
+              if (!createdPokemonIds.has(pokemonDetails.id)) {
+                createPokemonCard(pokemonDetails);
+              }
+            });
+          })
+          .catch(error => console.error("Error fetching Pokemon details:", error));
+        })
+        .catch(error => console.error("Error fetching Pokemon list:", error));
+
+      closeModalButton.addEventListener("click", () => {
+        closeModal();
+      });
+
+      searchBar.addEventListener("keyup", event => {
+        if (event.key === "Enter") {
+          searchPokemon();
+        }
+      });
+
+      clearSearchButton.addEventListener("click", () => {
+        searchBar.value = "";
+      });
+
+      searchButton.addEventListener("click", () => {
+        searchPokemon();
+      });
+    });
+  </script>
+
+</body>
+</html>
