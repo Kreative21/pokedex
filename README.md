@@ -1,5 +1,5 @@
 # Updates:
 
-<details open><summary>v2</summary>
+<details><summary>Click to open</summary>
   👉 Added Navigation System (Next and Previous)
 </details>
