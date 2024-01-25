@@ -345,7 +345,11 @@
             currentIndex = pokemonDetailsList.findIndex(pokemon => pokemon.id === data.id);
             updateModal(currentIndex);
           })
-          .catch(error => console.error("Error fetching Pokemon details:", error));
+          .catch(error => {
+            console.error("Error fetching Pokemon details:", error);
+            // Display popup for wrong input
+            alert("Pokemon not found. Please enter a valid name or number.");
+          });
       }
 
       const apiUrl = "https://pokeapi.co/api/v2/pokemon?limit=905";
