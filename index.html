@@ -1,400 +1,480 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pokédex</title>
-  <link rel="icon" type="image/png" href="https://icon-library.com/images/pokedex-icon/pokedex-icon-8.jpg">
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #2c3e50;
-      color: #ecf0f1;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="icon" type="image/png" href="https://icon-library.com/images/pokedex-icon/pokedex-icon-8.jpg">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    header {
-      background-color: #3498db;
-      color: #fff;
-      padding: 1em;
-      text-align: center;
-      font-size: 1.5em;
-    }
+        header {
+            background-color: #3498db;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+            font-size: 1.5em;
+        }
 
-    main {
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #34495e;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #34495e;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    #pokemonList {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      justify-content: center;
-    }
+        #typeCategories {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
 
-    .pokemonCard {
-      cursor: pointer;
-      padding: 15px;
-      background-color: #2c3e50;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      transition: transform 0.3s;
-      position: relative;
-    }
+        #typeCategories button {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
 
-    .pokemonCard:hover {
-      transform: scale(1.05);
-    }
+        #typeCategories button:hover {
+            background-color: #2980b9;
+        }
 
-    img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      transition: transform 0.3s ease-in-out;
-    }
+        #typeCategories #homeButton {
+            margin-left: 0;
+        }
 
-    .pokemonCard:hover img {
-      transform: rotate(20deg) scale(1.2);
-    }
+        #searchBarContainer {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
 
-    p {
-      margin: 0;
-      font-weight: bold;
-    }
+        #searchBar {
+            flex: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
 
-    .pokemonName {
-      font-size: 1.8em;
-      margin-bottom: 5px;
-    }
+        #clearSearchButton,
+        #searchButton {
+            cursor: pointer;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
 
-    .pokemonNumber {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.8em;
-      color: #bdc3c7;
-    }
+        #clearSearchButton {
+            background-color: #e74c3c;
+            color: #fff;
+            margin-left: 10px;
+        }
 
-    #pokemonModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      justify-content: center;
-      align-items: center;
-    }
+        #searchButton {
+            background-color: #3498db;
+            color: #fff;
+            margin-left: 10px;
+        }
 
-    #modalContent {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      position: relative;
-    }
+        #pokemonList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
 
-    #closeModal {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-      color: #3498db;
-      font-weight: bold;
-      font-size: 1.5em;
-      transition: transform 0.3s;
-    }
+        .pokemonCard {
+            cursor: pointer;
+            padding: 15px;
+            background-color: #2c3e50;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+            position: relative;
+        }
 
-    #closeModal:hover {
-      transform: scale(1.2);
-    }
+        .pokemonCard:hover {
+            transform: scale(1.05);
+        }
 
-    #prevPokemon, #nextPokemon {
-      cursor: pointer;
-      padding: 10px;
-      background-color: #3498db;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-      margin-right: 10px;
-    }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
 
-    #modalPokemonName {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-      color: #000;
-      font-weight: bold;
-    }
+        .pokemonCard:hover img {
+            transform: rotate(20deg) scale(1.2);
+        }
 
-    #modalPokemonImage {
-      max-width: 200px;
-      margin-bottom: 10px;
-      transition: transform 0.3s ease-in-out;
-    }
+        p {
+            margin: 0;
+            font-weight: bold;
+        }
 
-    #modalPokemonImage:hover {
-      transform: rotate(20deg) scale(1.2);
-    }
+        .pokemonName {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
 
-    #modalPokemonDescription {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-      color: #555;
-    }
+        .pokemonNumber {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            color: #bdc3c7;
+        }
 
-    #modalPokemonDetails {
-      font-size: 1.2em;
-      color: #000;
-      font-weight: bold;
-      margin-top: 10px;
-    }
+        #pokemonModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
 
-    #searchBarContainer {
-      display: flex;
-      align-items: center;
-      margin-top: 20px;
-    }
+        #modalContent {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
 
-    #searchBar {
-      flex: 1;
-      padding: 10px;
-      box-sizing: border-box;
-      font-size: 1em;
-    }
+        #closeModal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #3498db;
+            font-weight: bold;
+            font-size: 1.5em;
+            transition: transform 0.3s;
+        }
 
-    #clearSearchButton {
-      cursor: pointer;
-      padding: 10px;
-      background-color: #e74c3c;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-      margin-left: 10px;
-    }
+        #closeModal:hover {
+            transform: scale(1.2);
+        }
 
-    #searchButton {
-      cursor: pointer;
-      padding: 10px;
-      margin-left: 10px;
-      background-color: #3498db;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-    }
-  </style>
+        #prevPokemon,
+        #nextPokemon {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        #modalPokemonName {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        #modalPokemonImage {
+            max-width: 200px;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #modalPokemonImage:hover {
+            transform: rotate(20deg) scale(1.2);
+        }
+
+        #modalPokemonDescription {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        #modalPokemonDetails {
+            font-size: 1.2em;
+            color: #000;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* ... (remaining styles remain unchanged) ... */
+    </style>
 </head>
+
 <body>
 
-  <header>
-    <h1>Pokédex by 𝓛</h1>
-  </header>
+    <header>
+        <h1>Pokédex by 𝓛</h1>
+    </header>
 
-  <main>
-    <div id="searchBarContainer">
-      <input type="text" id="searchBar" placeholder="Search Pokemon by Name">
-      <button id="clearSearchButton">x</button>
-      <button id="searchButton">Search</button>
+    <main>
+        <div id="typeCategories"></div>
+
+        <div id="searchBarContainer">
+            <input type="text" id="searchBar" placeholder="Search Pokemon by Name">
+            <button id="clearSearchButton">x</button>
+            <button id="searchButton">Search</button>
+        </div>
+
+        <div id="pokemonList"></div>
+    </main>
+
+    <div id="pokemonModal">
+        <div id="modalContent">
+            <span id="closeModal">&times;</span>
+            <button id="prevPokemon">Previous</button>
+            <button id="nextPokemon">Next</button>
+            <h2 id="modalPokemonName"></h2>
+            <img id="modalPokemonImage" alt="Pokemon Image">
+            <p id="modalPokemonDescription"></p>
+            <p id="modalPokemonDetails"></p>
+        </div>
     </div>
-    <div id="pokemonList"></div>
-  </main>
 
-  <div id="pokemonModal">
-    <div id="modalContent">
-      <span id="closeModal">&times;</span>
-      <button id="prevPokemon">Previous</button>
-      <button id="nextPokemon">Next</button>
-      <h2 id="modalPokemonName"></h2>
-      <img id="modalPokemonImage" alt="Pokemon Image">
-      <p id="modalPokemonDescription"></p>
-      <p id="modalPokemonDetails"></p>
-    </div>
-  </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const pokemonListElement = document.getElementById("pokemonList");
+            const pokemonModal = document.getElementById("pokemonModal");
+            const closeModalButton = document.getElementById("closeModal");
+            const modalPokemonName = document.getElementById("modalPokemonName");
+            const modalPokemonImage = document.getElementById("modalPokemonImage");
+            const modalPokemonDescription = document.getElementById("modalPokemonDescription");
+            const modalPokemonDetails = document.getElementById("modalPokemonDetails");
+            const searchBar = document.getElementById("searchBar");
+            const clearSearchButton = document.getElementById("clearSearchButton");
+            const searchButton = document.getElementById("searchButton");
+            const prevPokemonButton = document.getElementById("prevPokemon");
+            const nextPokemonButton = document.getElementById("nextPokemon");
+            const typeCategoriesElement = document.getElementById("typeCategories");
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const pokemonListElement = document.getElementById("pokemonList");
-      const pokemonModal = document.getElementById("pokemonModal");
-      const closeModalButton = document.getElementById("closeModal");
-      const modalPokemonName = document.getElementById("modalPokemonName");
-      const modalPokemonImage = document.getElementById("modalPokemonImage");
-      const modalPokemonDescription = document.getElementById("modalPokemonDescription");
-      const modalPokemonDetails = document.getElementById("modalPokemonDetails");
-      const searchBar = document.getElementById("searchBar");
-      const clearSearchButton = document.getElementById("clearSearchButton");
-      const searchButton = document.getElementById("searchButton");
-      const prevPokemonButton = document.getElementById("prevPokemon");
-      const nextPokemonButton = document.getElementById("nextPokemon");
+            let currentIndex = 0;
+            let pokemonDetailsList = [];
 
-      let currentIndex = 0;
-      let pokemonDetailsList = [];
+            function createPokemonCard(pokemonDetails) {
+                const pokemonCard = document.createElement("div");
+                pokemonCard.classList.add("pokemonCard");
 
-      function createPokemonCard(pokemonDetails) {
-        const pokemonCard = document.createElement("div");
-        pokemonCard.classList.add("pokemonCard");
+                const image = document.createElement("img");
+                image.src = pokemonDetails.sprites.other["official-artwork"].front_default;
+                image.alt = pokemonDetails.name;
 
-        const image = document.createElement("img");
-        image.src = pokemonDetails.sprites.other["official-artwork"].front_default;
-        image.alt = pokemonDetails.name;
+                const name = document.createElement("p");
+                name.classList.add("pokemonName");
+                name.textContent = capitalizeFirstLetter(pokemonDetails.name);
 
-        const name = document.createElement("p");
-        name.classList.add("pokemonName");
-        name.textContent = capitalizeFirstLetter(pokemonDetails.name);
+                const number = document.createElement("p");
+                number.classList.add("pokemonNumber");
+                number.textContent = `#${pokemonDetails.id}`;
 
-        const number = document.createElement("p");
-        number.classList.add("pokemonNumber");
-        number.textContent = `#${pokemonDetails.id}`;
+                pokemonCard.appendChild(image);
+                pokemonCard.appendChild(name);
+                pokemonCard.appendChild(number);
+                pokemonListElement.appendChild(pokemonCard);
 
-        pokemonCard.appendChild(image);
-        pokemonCard.appendChild(name);
-        pokemonCard.appendChild(number);
-        pokemonListElement.appendChild(pokemonCard);
-
-        pokemonCard.addEventListener("click", () => {
-          showModal(pokemonDetails);
-        });
-      }
-
-      function updateModal(index) {
-        const currentPokemon = pokemonDetailsList[index];
-        showModal(currentPokemon);
-      }
-
-      function showNextPokemon() {
-        currentIndex = (currentIndex + 1) % pokemonDetailsList.length;
-        updateModal(currentIndex);
-      }
-
-      function showPreviousPokemon() {
-        currentIndex = (currentIndex - 1 + pokemonDetailsList.length) % pokemonDetailsList.length;
-        updateModal(currentIndex);
-      }
-
-      function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-      }
-
-      function showModal(pokemonDetails) {
-        modalPokemonName.textContent = capitalizeFirstLetter(pokemonDetails.name);
-        modalPokemonImage.src = pokemonDetails.sprites.other["official-artwork"].front_default;
-
-        fetch(pokemonDetails.species.url)
-          .then(response => response.json())
-          .then(speciesDetails => {
-            const abilities = pokemonDetails.abilities.map(ability => capitalizeFirstLetter(ability.ability.name)).join(", ");
-            const types = pokemonDetails.types.map(type => capitalizeFirstLetter(type.type.name)).join(", ");
-            const description = speciesDetails.flavor_text_entries.find(entry => entry.language.name === 'en').flavor_text;
-            const genders = speciesDetails.gender_rate === -1 ? "Genderless" : `Male: ${speciesDetails.gender_rate * 12.5}%, Female: ${(8 - speciesDetails.gender_rate) * 12.5}%`;
-
-            modalPokemonDescription.textContent = description;
-
-            const detailsText = `
-              Abilities: ${abilities}
-              <br>Types: ${types}
-              <br>Height: ${pokemonDetails.height / 10} m
-              <br>Weight: ${pokemonDetails.weight / 10} kg
-              <br>Gender: ${genders}
-            `;
-
-            modalPokemonDetails.innerHTML = detailsText;
-            pokemonModal.style.display = "flex";
-          })
-          .catch(error => console.error("Error fetching Pokemon species details:", error));
-      }
-
-      function closeModal() {
-        modalPokemonName.textContent = "";
-        modalPokemonImage.src = "";
-        modalPokemonDescription.textContent = "";
-        modalPokemonDetails.textContent = "";
-        pokemonModal.style.display = "none";
-      }
-
-      function searchPokemon() {
-        const searchName = searchBar.value.toLowerCase();
-        const apiUrl = `https://pokeapi.co/api/v2/pokemon/${searchName}`;
-
-        fetch(apiUrl)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error("Pokemon not found");
+                pokemonCard.addEventListener("click", () => {
+                    showModal(pokemonDetails);
+                });
             }
-            return response.json();
-          })
-          .then(data => {
-            if (!pokemonDetailsList.some(pokemon => pokemon.id === data.id)) {
-              pokemonDetailsList.push(data);
-              createPokemonCard(data);
+
+            function updateModal(index) {
+                const currentPokemon = pokemonDetailsList[index];
+                showModal(currentPokemon);
             }
-            currentIndex = pokemonDetailsList.findIndex(pokemon => pokemon.id === data.id);
-            updateModal(currentIndex);
-          })
-          .catch(error => {
-            console.error("Error fetching Pokemon details:", error);
-            // Display popup for wrong input
-            alert("Pokemon not found. Please enter a valid name or number.");
-          });
-      }
 
-      const apiUrl = "https://pokeapi.co/api/v2/pokemon?limit=905";
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          const pokemonData = data.results;
+            function showNextPokemon() {
+                currentIndex = (currentIndex + 1) % pokemonDetailsList.length;
+                updateModal(currentIndex);
+            }
 
-          Promise.all(
-            pokemonData.map(pokemon => fetch(pokemon.url).then(response => response.json()))
-          )
-          .then(detailsList => {
-            pokemonDetailsList = detailsList.sort((a, b) => a.id - b.id);
+            function showPreviousPokemon() {
+                currentIndex = (currentIndex - 1 + pokemonDetailsList.length) % pokemonDetailsList.length;
+                updateModal(currentIndex);
+            }
 
-            pokemonDetailsList.forEach(pokemonDetails => {
-              createPokemonCard(pokemonDetails);
+            function capitalizeFirstLetter(string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+
+            function showModal(pokemonDetails) {
+                modalPokemonName.textContent = capitalizeFirstLetter(pokemonDetails.name);
+                modalPokemonImage.src = pokemonDetails.sprites.other["official-artwork"].front_default;
+
+                fetch(pokemonDetails.species.url)
+                    .then(response => response.json())
+                    .then(speciesDetails => {
+                        const abilities = pokemonDetails.abilities.map(ability => capitalizeFirstLetter(ability.ability.name)).join(", ");
+                        const types = pokemonDetails.types.map(type => capitalizeFirstLetter(type.type.name)).join(", ");
+                        const description = speciesDetails.flavor_text_entries.find(entry => entry.language.name === 'en').flavor_text;
+                        const genders = speciesDetails.gender_rate === -1 ? "Genderless" : `Male: ${speciesDetails.gender_rate * 12.5}%, Female: ${(8 - speciesDetails.gender_rate) * 12.5}%`;
+
+                        modalPokemonDescription.textContent = description;
+
+                        const detailsText = `
+                            Abilities: ${abilities}
+                            <br>Types: ${types}
+                            <br>Height: ${pokemonDetails.height / 10} m
+                            <br>Weight: ${pokemonDetails.weight / 10} kg
+                            <br>Gender: ${genders}
+                        `;
+
+                        modalPokemonDetails.innerHTML = detailsText;
+                        pokemonModal.style.display = "flex";
+                    })
+                    .catch(error => console.error("Error fetching Pokemon species details:", error));
+            }
+
+            function closeModal() {
+                modalPokemonName.textContent = "";
+                modalPokemonImage.src = "";
+                modalPokemonDescription.textContent = "";
+                modalPokemonDetails.textContent = "";
+                pokemonModal.style.display = "none";
+            }
+
+            function searchPokemon() {
+                const searchName = searchBar.value.toLowerCase();
+                const apiUrl = `https://pokeapi.co/api/v2/pokemon/${searchName}`;
+
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Pokemon not found");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!pokemonDetailsList.some(pokemon => pokemon.id === data.id)) {
+                            pokemonDetailsList.push(data);
+                            createPokemonCard(data);
+                        }
+                        currentIndex = pokemonDetailsList.findIndex(pokemon => pokemon.id === data.id);
+                        updateModal(currentIndex);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching Pokemon details:", error);
+                        // Display popup for wrong input
+                        alert("Pokemon not found. Please enter a valid name or number.");
+                    });
+            }
+
+            function createTypeCategory(type) {
+                const typeCategory = document.createElement("button");
+                typeCategory.textContent = capitalizeFirstLetter(type);
+                typeCategory.addEventListener("click", () => filterPokemonByType(type));
+
+                typeCategoriesElement.appendChild(typeCategory);
+            }
+
+            // Add "Home" category button
+            const homeButton = document.createElement("button");
+            homeButton.id = "homeButton";
+            homeButton.textContent = "Home";
+            homeButton.addEventListener("click", () => filterPokemonByHome());
+            typeCategoriesElement.appendChild(homeButton);
+
+            function filterPokemonByType(type) {
+                const filteredPokemon = pokemonDetailsList.filter(pokemon => pokemon.types.some(pType => pType.type.name === type));
+
+                // Clear previous Pokemon cards
+                pokemonListElement.innerHTML = "";
+
+                // Display filtered Pokemon cards
+                filteredPokemon.forEach(pokemonDetails => {
+                    createPokemonCard(pokemonDetails);
+                });
+            }
+
+            // Reset and show all Pokemon
+            function filterPokemonByHome() {
+                pokemonListElement.innerHTML = "";
+                pokemonDetailsList.forEach(pokemonDetails => {
+                    createPokemonCard(pokemonDetails);
+                });
+            }
+
+            // Fetch the list of Pokemon types
+            fetch("https://pokeapi.co/api/v2/type")
+                .then(response => response.json())
+                .then(data => {
+                    const types = data.results.map(type => type.name);
+                    types.forEach(type => createTypeCategory(type));
+                })
+                .catch(error => console.error("Error fetching Pokemon types:", error));
+
+            const apiUrl = "https://pokeapi.co/api/v2/pokemon?limit=905";
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const pokemonData = data.results;
+
+                    Promise.all(
+                            pokemonData.map(pokemon => fetch(pokemon.url).then(response => response.json()))
+                        )
+                        .then(detailsList => {
+                            pokemonDetailsList = detailsList.sort((a, b) => a.id - b.id);
+
+                            pokemonDetailsList.forEach(pokemonDetails => {
+                                createPokemonCard(pokemonDetails);
+                            });
+                        })
+                        .catch(error => console.error("Error fetching Pokemon details:", error));
+                })
+                .catch(error => console.error("Error fetching Pokemon list:", error));
+
+            closeModalButton.addEventListener("click", () => {
+                closeModal();
             });
-          })
-          .catch(error => console.error("Error fetching Pokemon details:", error));
-        })
-        .catch(error => console.error("Error fetching Pokemon list:", error));
 
-      closeModalButton.addEventListener("click", () => {
-        closeModal();
-      });
+            searchBar.addEventListener("keyup", event => {
+                if (event.key === "Enter") {
+                    searchPokemon();
+                }
+            });
 
-      searchBar.addEventListener("keyup", event => {
-        if (event.key === "Enter") {
-          searchPokemon();
-        }
-      });
+            clearSearchButton.addEventListener("click", () => {
+                searchBar.value = "";
+            });
 
-      clearSearchButton.addEventListener("click", () => {
-        searchBar.value = "";
-      });
+            searchButton.addEventListener("click", () => {
+                searchPokemon();
+            });
 
-      searchButton.addEventListener("click", () => {
-        searchPokemon();
-      });
-
-      // Event listeners for navigation buttons
-      prevPokemonButton.addEventListener("click", showPreviousPokemon);
-      nextPokemonButton.addEventListener("click", showNextPokemon);
-    });
-  </script>
+            // Event listeners for navigation buttons
+            prevPokemonButton.addEventListener("click", showPreviousPokemon);
+            nextPokemonButton.addEventListener("click", showNextPokemon);
+        });
+    </script>
 
 </body>
+
 </html>
