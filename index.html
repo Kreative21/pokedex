@@ -227,7 +227,7 @@
             margin-top: 10px;
         }
 
-        /* ... (remaining styles remain unchanged) ... */
+       
     </style>
 </head>
 
@@ -382,7 +382,6 @@
                     })
                     .catch(error => {
                         console.error("Error fetching Pokemon details:", error);
-                        // Display popup for wrong input
                         alert("Pokemon not found. Please enter a valid name or number.");
                     });
             }
@@ -395,7 +394,7 @@
                 typeCategoriesElement.appendChild(typeCategory);
             }
 
-            // Add "Home" category button
+            
             const homeButton = document.createElement("button");
             homeButton.id = "homeButton";
             homeButton.textContent = "Home";
@@ -405,16 +404,16 @@
             function filterPokemonByType(type) {
                 const filteredPokemon = pokemonDetailsList.filter(pokemon => pokemon.types.some(pType => pType.type.name === type));
 
-                // Clear previous Pokemon cards
+                
                 pokemonListElement.innerHTML = "";
 
-                // Display filtered Pokemon cards
+              
                 filteredPokemon.forEach(pokemonDetails => {
                     createPokemonCard(pokemonDetails);
                 });
             }
 
-            // Reset and show all Pokemon
+         
             function filterPokemonByHome() {
                 pokemonListElement.innerHTML = "";
                 pokemonDetailsList.forEach(pokemonDetails => {
@@ -422,7 +421,7 @@
                 });
             }
 
-            // Fetch the list of Pokemon types
+     
             fetch("https://pokeapi.co/api/v2/type")
                 .then(response => response.json())
                 .then(data => {
@@ -469,7 +468,7 @@
                 searchPokemon();
             });
 
-            // Event listeners for navigation buttons
+       
             prevPokemonButton.addEventListener("click", showPreviousPokemon);
             nextPokemonButton.addEventListener("click", showNextPokemon);
         });
@@ -478,3 +477,4 @@
 </body>
 
 </html>
+
